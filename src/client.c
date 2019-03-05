@@ -1,12 +1,14 @@
 #include <stdio.h>      // NULL, fprintf(), perror()
 #include <stdlib.h>     // NULL, EXIT_FAILURE, EXIT_SUCCESS
-#include <string.h>     //
+#include <string.h>     // strstr(), strlen(), etc
 #include <errno.h>      // errno
 #include <sys/types.h>  // ssize_t
-#include <signal.h>
+#include <signal.h>	// To handle SIGINT etc
 #include <time.h>
 #include <pthread.h>
 #include "../inc/libtwirc.h"
+
+#define NICK "kaulmate"
 
 static volatile int running; // Used to stop main loop in case of SIGINT etc
 static volatile int handled; // The last signal that has been handled
@@ -175,7 +177,7 @@ int main(void)
 	}
 
 	// CONNECT TO THE IRC SERVER
-	if (twirc_connect(s, "irc.chat.twitch.tv", "6667", "kaulmate", token) != 0)
+	if (twirc_connect(s, "irc.chat.twitch.tv", "6667", NICK, token) != 0)
 	{
 		fprintf(stderr, "Could not connect socket\n");
 		return EXIT_FAILURE;
@@ -187,14 +189,12 @@ int main(void)
 	pthread_create(&t, NULL, &input_thread, (void *) s);
 
 	// MAIN LOOP
-	//twirc_loop(s, 1000);
 	running = 1;
 	while (twirc_tick(s, 1000) == 0 && running == 1)
 	{
 	}
 
 	twirc_kill(s);
-	//pthread_join(t, NULL);
 	fprintf(stderr, "Bye!\n");
 
 	return EXIT_SUCCESS;
