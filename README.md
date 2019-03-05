@@ -15,11 +15,9 @@ A simple bot that connects to Twitch IRC. Not yet ready. Stick with `client.c` f
 - Clone [`libtwirc`](https://github.com/domsson/libtwirc) to somewhere
 - Build `libtwirc` with the provided `build-shared` script
 - Copy the resulting `.so` and `.h` files from the `lib` dir of libtwirc to the `inc` dir of twircclient (you can use twircclient's `./fetch` for this, if both repositories reside within the same parent directory)
-- Run `./build`
-- Run `export LD_LIBRARY_PATH=$(pwd)/inc:$LD_LIBRARY_PATH` so that your machine knows where to find the library files (alternatively, place the library files into the appropriate directories for your system)
 - Create a `token` file within twircclient's directory and place your Twitch oauth-token in it
 - Open `src/client.c` and change `"kaulmate"` (line 11 or somesuch) to your (or your bot's) Twitch username (the one that goes with the oauth token you are using)
+- Run `./build`
+- Run `export LD_LIBRARY_PATH=$(pwd)/inc:$LD_LIBRARY_PATH` so that your machine knows where to find the library files (alternatively, place the library files into the appropriate directories for your system)
 - Run `./bin/client`
-- Profit
-
-
+- Profit, maybe
