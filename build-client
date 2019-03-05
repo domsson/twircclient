@@ -1,0 +1,3 @@
+gcc -g -Wall -L$(pwd)/inc src/client.c -o bin/client -lpthread -ltwirc
+export LD_LIBRARY_PATH=$(pwd)/inc:$LD_LIBRARY_PATH
+

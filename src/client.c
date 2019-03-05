@@ -9,6 +9,8 @@
 #include "../inc/libtwirc.h"
 
 #define NICK "kaulmate"
+#define HOST "irc.chat.twitch.tv"
+#define PORT "6667"
 
 static volatile int running; // Used to stop main loop in case of SIGINT etc
 static volatile int handled; // The last signal that has been handled
@@ -42,22 +44,15 @@ int read_token(char *buf, size_t len)
 	return 1;
 }
 
-/*
- *
- */
 void handle_connect(struct twirc_state *s, struct twirc_event *evt)
 {
 	fprintf(stdout, "*** connected!\n");
 }
 
-/*
- *
- */
 void handle_welcome(struct twirc_state *s, struct twirc_event *evt)
 {
 	fprintf(stdout, "*** logged in!\n");
 }
-
 
 void handle_disconnect(struct twirc_state *s, struct twirc_event *evt)
 {
@@ -107,9 +102,7 @@ void *input_thread(void *vargp)
  */
 int main(void)
 {
-	// HELLO WORLD
-	fprintf(stderr, "Starting up %s version %o.%o build %f\n",
-		TWIRC_NAME, TWIRC_VER_MAJOR, TWIRC_VER_MINOR, TWIRC_VER_BUILD);
+	fprintf(stderr, "Starting up libtwirc test client...\n");
 
 	// Make sure we still do clean-up on SIGINT (ctrl+c)
 	// and similar signals that indicate we should quit.
@@ -131,7 +124,15 @@ int main(void)
 
 	// CREATE TWIRC INSTANCE
 	struct twirc_state *s = twirc_init();
-	
+
+	if (s == NULL)
+	{
+		fprintf(stderr, "Could not init twirc state\n");
+		return EXIT_FAILURE;
+	}
+
+	fprintf(stderr, "Successfully initialized twirc state...\n");
+
 	// SET UP CALLBACKS
 	struct twirc_callbacks *cbs = twirc_get_callbacks(s);
 	cbs->connect         = handle_connect;
@@ -159,14 +160,6 @@ int main(void)
 	cbs->disconnect      = handle_disconnect;
 	cbs->outbound        = handle_outbound;
 
-	if (s == NULL)
-	{
-		fprintf(stderr, "Could not init twirc state\n");
-		return EXIT_FAILURE;
-	}
-
-	fprintf(stderr, "Successfully initialized twirc state...\n");
-	
 	// READ IN TOKEN FILE
 	char token[128];
 	int token_success = read_token(token, 128);
@@ -177,7 +170,7 @@ int main(void)
 	}
 
 	// CONNECT TO THE IRC SERVER
-	if (twirc_connect(s, "irc.chat.twitch.tv", "6667", NICK, token) != 0)
+	if (twirc_connect(s, HOST, PORT, NICK, token) != 0)
 	{
 		fprintf(stderr, "Could not connect socket\n");
 		return EXIT_FAILURE;
@@ -194,9 +187,10 @@ int main(void)
 	{
 	}
 
+	// CLEANUP
 	twirc_kill(s);
-	fprintf(stderr, "Bye!\n");
 
+	fprintf(stderr, "Bye!\n");
 	return EXIT_SUCCESS;
 }
 
