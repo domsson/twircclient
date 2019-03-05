@@ -6,14 +6,9 @@ Example code that shows how to use [`libtwirc`](https://github.com/domsson/libtw
 
 A simple bot that connects to Twitch IRC and joins a channel. The source is well-commented, check it out.
 
-If you want to run it yourself, set the `NICK` and `CHAN` constants to your credentials and channel, then check out the "How to" section below.
-
 ## `client.c`
 
 A simple client that connectes to Twitch IRC and outputs all incoming messages on the console. Reads user input and sends it to the IRC server.
-
-If you want to run it yourself, set the `NICK` constant to the username you want to use, then check out the "How to" section below.
-
 
 # How to
 
