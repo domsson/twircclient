@@ -92,7 +92,7 @@ void handle_join(twirc_state_t *s, twirc_event_t *evt)
 {
 	// Check if we just saw ourself joining our channel
 	if (evt->origin && strcmp(evt->origin, NICK) == 0
-	    && strcmp(evt->params[0], CHAN) == 0)
+	    && strcmp(evt->channel, CHAN) == 0)
 	{
 		// privmsg actually sends a message to a channel
 		twirc_cmd_privmsg(s, CHAN, "I'm alive!");
