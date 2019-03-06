@@ -180,7 +180,6 @@ void sigint_handler(int sig)
  */
 int main(void)
 {
-	// Output libtwirc version
 	fprintf(stderr, "Starting up libtwirc test bot...");
 	
 	// Make sure we still do clean-up on SIGINT (ctrl+c)
@@ -188,18 +187,11 @@ int main(void)
 	struct sigaction sa_int = {
 		.sa_handler = &sigint_handler
 	};
-	if (sigaction(SIGINT, &sa_int, NULL) == -1)
-	{
-		fprintf(stderr, "Failed to register SIGINT handler\n");
-	}
-	if (sigaction(SIGQUIT, &sa_int, NULL) == -1)
-	{
-		fprintf(stderr, "Failed to register SIGQUIT handler\n");
-	}
-	if (sigaction (SIGTERM, &sa_int, NULL) == -1)
-	{
-		fprintf(stderr, "Failed to register SIGTERM handler\n");
-	}
+	
+	// These might return -1 on error, but we'll ignore that for now
+	sigaction(SIGINT, &sa_int, NULL);
+	sigaction(SIGQUIT, &sa_int, NULL);
+	sigaction (SIGTERM, &sa_int, NULL);
 
 	// Create libtwirc state instance
 	twirc_state_t *s = twirc_init();
