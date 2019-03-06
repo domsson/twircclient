@@ -43,7 +43,12 @@ touch token
 echo "oauth:YOUR-TOKEN-HERE" > token
 ```
 
-5. Open `src/bot.c` or `src/client.c` (depending on which one you want to run) and edit the `#define NICK` and `#define CHAN` lines to your needs.
+5. Open `src/bot.c` or `src/client.c` (depending on which one you want to run) and edit the `#define`s to meet your needs:
+
+```
+#define NICK "your-twitch-username-here"
+#define CHAN "#your-channel-here"
+```
 
 6. Compile the bot and/or client:
 
