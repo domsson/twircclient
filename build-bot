@@ -1,3 +1,1 @@
 gcc -g -Wall -L$(pwd)/inc src/bot.c -o bin/bot -ltwirc
-export LD_LIBRARY_PATH=$(pwd)/inc:$LD_LIBRARY_PATH
-

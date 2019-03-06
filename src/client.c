@@ -6,7 +6,7 @@
 #include <signal.h>	// To handle SIGINT etc
 #include <time.h>
 #include <pthread.h>
-#include "../inc/libtwirc.h"
+#include "libtwirc.h"
 
 #define NICK "kaulmate"
 #define HOST "irc.chat.twitch.tv"

@@ -1,2 +1,0 @@
-cp ../libtwirc/lib/libtwirc.so inc/
-cp ../libtwirc/lib/libtwirc.h  inc/

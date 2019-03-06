@@ -5,7 +5,7 @@
 #include <sys/types.h>  // ssize_t
 #include <signal.h>
 #include <time.h>
-#include "../inc/libtwirc.h"
+#include "libtwirc.h"
 
 #define NICK "kaulmate"
 #define CHAN "#domsson"
