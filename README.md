@@ -27,16 +27,18 @@ chmod +x build-shared
 ./build-shared
 ```
 
-3. Go over to the `twircclient` directory and copy the compiled library files into its `inc` directory:
+3. Install `libtwirc`. This will vary depending on your distro and machine, as the include paths aren't the same for all. You'll have to look up where your distro wants shared library and header files. In any case, after copying the files to their appropriate directories, you should call `ldconfig` so that your system learns about the new library. For my amd64 Debian install, this does the trick (requires super user permissions):
 
 ```
-cd ../twircclient/
-cp ../libtwirc/lib/* ./inc/
+cp lib/libtwirc.so /usr/lib/x86_64-linux-gnu/
+cp lib/libtwirc.h /usr/include/
+ldconfig -v -n /usr/lib
 ```
 
-4. Create a token file and place your [Twitch oauth token](https://twitchapps.com/tmi/) in there:
+4. Go over to the `twircclient` directory, create a token file and place your [Twitch oauth token](https://twitchapps.com/tmi/) in there:
 
 ```
+cd ../twircclient
 touch token
 echo "oauth:YOUR-TOKEN-HERE" > token
 ```
@@ -46,17 +48,13 @@ echo "oauth:YOUR-TOKEN-HERE" > token
 6. Compile the bot and/or client:
 
 ```
+chmod +x build-bot
+chmod +x build-client
 ./build-bot
 ./build-client
 ```
 
-7. Tell your machine where to find the library (as they aren't in the standard directories is usually searches for libraries); this is temporary:
-
-```
-export LD_LIBRARY_PATH=$(pwd)/inc:$LD_LIBRARY_PATH`
-```
-
-8. Run the bot and or client:
+8. Run the bot and/or client:
 
 ```
 ./bin/bot
