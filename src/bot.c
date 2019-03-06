@@ -48,7 +48,7 @@ int read_token(char *buf, size_t len)
  * Called once the connection has been established. This does not mean we're
  * authenticated yet, hence we should not attempt to join channels yet etc.
  */
-void handle_connect(struct twirc_state *s, struct twirc_event *evt)
+void handle_connect(twirc_state_t *s, twirc_event_t *evt)
 {
 	fprintf(stdout, "*** connected!\n");
 }
@@ -56,7 +56,7 @@ void handle_connect(struct twirc_state *s, struct twirc_event *evt)
 /*
  * Called once we're authenticated. This is where we can join channels etc.
  */
-void handle_welcome(struct twirc_state *s, struct twirc_event *evt)
+void handle_welcome(twirc_state_t *s, twirc_event_t *evt)
 {
 	fprintf(stdout, "*** logged in!\n");
 
@@ -66,10 +66,29 @@ void handle_welcome(struct twirc_state *s, struct twirc_event *evt)
 }
 
 /*
+ * Also called after authentication, usually right after the welcome event.
+ * The differnce is that globaluserstate brings with it some tags that let us 
+ * know a bit more about ourselves, for example our display-name (which can be
+ * different from our username/nick), our user-id, which me might need for API 
+ * calls and such, as well as our current chat color, if we have selected one.
+ */
+void handle_globaluserstate(twirc_state_t *s, twirc_event_t *evt)
+{
+	// The login struct holds our authentication data (host, port, nick
+	// and token). After we have received the globaluserstate, it should 
+	// also contain our display-name in 'name' and our user-id in 'id'.
+	twirc_login_t *login = twirc_get_login(s);
+
+	fprintf(stdout, "*** display-name = %s, user-id = %s\n",
+			login->name == NULL ? "(unknown)" : login->name,
+			login->id == NULL ? "(unknown)" : login->id);
+}
+
+/*
  * Called once we see a user join a channel we're in. This also fires for when
  * we join a channel, in which case 'evt->origin' will be our own username.
  */
-void handle_join(struct twirc_state *s, struct twirc_event *evt)
+void handle_join(twirc_state_t *s, twirc_event_t *evt)
 {
 	// Check if we just saw ourself joining our channel
 	if (evt->origin && strcmp(evt->origin, NICK) == 0
@@ -88,7 +107,7 @@ void handle_join(struct twirc_state *s, struct twirc_event *evt)
  * 'evt->channel' will contain the channel the message was sent to,
  * 'evt->message' will contain the actual chat message.
  */
-void handle_privmsg(struct twirc_state *s, struct twirc_event *evt)
+void handle_privmsg(twirc_state_t *s, twirc_event_t *evt)
 {
 	// Let's get the current time for a nice timestamp
 	time_t t = time(NULL);
@@ -110,7 +129,7 @@ void handle_privmsg(struct twirc_state *s, struct twirc_event *evt)
  * This is pretty much the same as the privmsg, just that the output is usually
  * stylized to differentiate it from regular chat messages.
  */
-void handle_action(struct twirc_state *s, struct twirc_event *evt)
+void handle_action(twirc_state_t *s, twirc_event_t *evt)
 {
 	time_t t = time(NULL);
 	struct tm tm = *localtime(&t);
@@ -126,7 +145,7 @@ void handle_action(struct twirc_state *s, struct twirc_event *evt)
 /*
  * Called when we receive a whisper (private message).
  */
-void handle_whisper(struct twirc_state *s, struct twirc_event *evt)
+void handle_whisper(twirc_state_t *s, twirc_event_t *evt)
 {
 	time_t t = time(NULL);
 	struct tm tm = *localtime(&t);
@@ -141,7 +160,7 @@ void handle_whisper(struct twirc_state *s, struct twirc_event *evt)
  * Called when a loss of connection has been detected. This could be due to 
  * a connection error or because Twitch closed the connection on us.
  */
-void handle_disconnect(struct twirc_state *s, struct twirc_event *evt)
+void handle_disconnect(twirc_state_t *s, twirc_event_t *evt)
 {
 	fprintf(stdout, "*** connection lost\n");
 }
@@ -183,7 +202,7 @@ int main(void)
 	}
 
 	// Create libtwirc state instance
-	struct twirc_state *s = twirc_init();
+	twirc_state_t *s = twirc_init();
 	
 	if (s == NULL)
 	{
@@ -194,16 +213,17 @@ int main(void)
 	fprintf(stderr, "Successfully initialized twirc state...\n");
 
 	// We get the callback struct from the libtwirc state
-	struct twirc_callbacks *cbs = twirc_get_callbacks(s);
+	twirc_callbacks_t *cbs = twirc_get_callbacks(s);
 
 	// We assign our handlers to the events we are interested int
-	cbs->connect    = handle_connect;
-	cbs->welcome    = handle_welcome;
-	cbs->join       = handle_join;
-	cbs->action     = handle_action;
-	cbs->privmsg    = handle_privmsg;
-	cbs->whisper    = handle_whisper;
-	cbs->disconnect = handle_disconnect;
+	cbs->connect         = handle_connect;
+	cbs->welcome         = handle_welcome;
+	cbs->globaluserstate = handle_globaluserstate;
+	cbs->join            = handle_join;
+	cbs->action          = handle_action;
+	cbs->privmsg         = handle_privmsg;
+	cbs->whisper         = handle_whisper;
+	cbs->disconnect      = handle_disconnect;
 	
 	// Read in the token file (oauth token / IRC password)
 	char token[128];
@@ -226,7 +246,7 @@ int main(void)
 	// Main loop - we call twirc_tick() every go-around, as that's what 
 	// makes the magic happen. The 1000 is a timeout in milliseconds that
 	// we grant twirc_tick() to do its work - in other words, we'll give 
-	// it 1 second do wait for and process IRC messages, then it will hand 
+	// it 1 second to wait for and process IRC messages, then it will hand 
 	// control back to us. If twirc_tick() detects a disconnect or error,
 	// it will return -1, otherwise it will return 0 and we can go on!
 
