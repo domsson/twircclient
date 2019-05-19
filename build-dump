@@ -1,0 +1,1 @@
+gcc -g -Wall -L$(pwd)/inc src/dump.c -o bin/dump -ltwirc
