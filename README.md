@@ -10,6 +10,11 @@ A simple bot that connects to Twitch IRC and joins a channel. The source is well
 
 A simple client that connectes to Twitch IRC and outputs all incoming messages on the console. Reads user input and sends it to the IRC server.
 
+## `dump.c`
+
+A simple program that connects to a channel specified with `-c #channel` and dumps all chat messages to `stdout`. Optionall, a timestamp can be added with `-t FORMAT`, for example `-t "[%H:%M:%S]"`
+
+
 # How to
 
 1. Clone `twircclient` and [`libtwirc`](https://github.com/domsson/libtwirc):
@@ -50,18 +55,21 @@ echo "oauth:YOUR-TOKEN-HERE" > token
 #define CHAN "#your-channel-here"
 ```
 
-6. Compile the bot and/or client:
+6. Compile the bot and/or client and/or dumper:
 
 ```
 chmod +x build-bot
 chmod +x build-client
+chmod +x build-dump
 ./build-bot
 ./build-client
+./build-dump
 ```
 
-8. Run the bot and/or client:
+8. Run the bot and/or client and/or dumper:
 
 ```
 ./bin/bot
 ./bin/client
+./bin/dump
 ```
