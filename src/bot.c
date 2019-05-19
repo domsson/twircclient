@@ -115,12 +115,12 @@ void handle_privmsg(twirc_state_t *s, twirc_event_t *evt)
 
 	// Chat messages usually contain a 'color' tag which is the color that 
 	// the user selected for their Twitch account, but could also be NULL
-	char *color = twirc_tag_by_key(evt->tags, "color");
+	twirc_tag_t *color = twirc_get_tag_by_key(evt->tags, "color");
 
 	// Let's print the chat message to the console!
 	fprintf(stdout, "[%02d:%02d:%02d] [%s] (%s) %s: %s\n", 
 			tm.tm_hour, tm.tm_min, tm.tm_sec, 
-			color ? color : "default",	
+			color && color->value ? color->value : "default",	
 			evt->channel, evt->origin, evt->message);
 }
 
@@ -134,11 +134,11 @@ void handle_action(twirc_state_t *s, twirc_event_t *evt)
 	time_t t = time(NULL);
 	struct tm tm = *localtime(&t);
 
-	char *color = twirc_tag_by_key(evt->tags, "color");
+	twirc_tag_t *color = twirc_get_tag_by_key(evt->tags, "color");
 	
 	fprintf(stdout, "[%02d:%02d:%02d] [%s] (%s) * %s %s\n",
 			tm.tm_hour, tm.tm_min, tm.tm_sec,
-			color ? color : "default",
+			color && color->value ? color->value : "default",
 			evt->channel, evt->origin, evt->message);
 }
 
