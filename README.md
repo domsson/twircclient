@@ -12,7 +12,7 @@ A simple client that connectes to Twitch IRC and outputs all incoming messages o
 
 ## `dump.c`
 
-A simple program that connects to a channel specified with `-c #channel` and dumps all chat messages to `stdout`. Optionall, a timestamp can be added with `-t FORMAT`, for example `-t "[%H:%M:%S]"`
+A simple program that connects to a channel specified with `-c #channel` and dumps all chat messages to `stdout`. Optionally, a timestamp can be added with `-t FORMAT`, for example `-t "[%H:%M:%S]"`
 
 
 # How to
